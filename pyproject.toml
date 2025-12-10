@@ -1,0 +1,32 @@
+[project]
+name = "webdocx"
+version = "0.1.0"
+description = "MCP server for web search, scraping, and documentation gathering"
+authors = [
+    { name = "Y4NN777", email = "axel.studiesmail@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "mcp",
+    "fastmcp",
+    "crawl4ai",
+    "duckduckgo-search",
+    "httpx",
+    "beautifulsoup4",
+    "readability-lxml",
+    "pydantic",
+    "anyio",
+]
+
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-asyncio",
+    "pytest-cov",
+]
+
+[build-system]
+requires = ["uv_build>=0.9.17,<0.10.0"]
+build-backend = "uv_build"
