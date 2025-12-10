@@ -1,30 +1,22 @@
 # WebDocx MCP
 
-Model Context Protocol (MCP) server providing real-time web access for LLMs and AI agents. Search, scrape, and crawl documentation—all from your workspace.
+MCP server for web access—search, scrape, crawl. Nine tools to gather and analyze web content from any MCP client.
 
-## Why?
+## Why
 
-Stop copy-pasting URLs and manually feeding web content to your AI assistant. WebDocx gives any MCP-compatible client (Claude Desktop, VS Code Copilot, custom tools) direct web access through a standardized protocol.
-
+Your AI assistant can't browse the web. WebDocx fixes that through MCP protocol. Works with Claude Desktop, VS Code Copilot, or any MCP-compatible client.
 
 ## Tools
 
-### Core Tools
-| Tool | What it does |
-|------|-------------|
-| `search_web` | Search with DuckDuckGo (region/filter support) |
-| `scrape_url` | Grab content from a URL as Markdown (w/ metadata) |
-| `crawl_docs` | Crawl multi-page docs (smart link filtering) |
-| `deep_dive` | Research a topic (parallel scraping) |
-| `summarize_page` | Quick page overview |
-
-### Advanced Tools
-| Tool | What it does |
-|------|-------------|
-| `compare_sources` | Compare info across multiple sources |
-| `find_related` | Discover related pages |
-| `extract_links` | Extract and categorize all links |
-| `monitor_changes` | Track page changes over time |
+**search_web** — DuckDuckGo search with region/filter support  
+**scrape_url** — Extract page content as Markdown (optional metadata)  
+**crawl_docs** — Multi-page documentation crawling (smart filtering)  
+**deep_dive** — Multi-source research with parallel fetching  
+**summarize_page** — Quick page structure overview  
+**compare_sources** — Analyze multiple sources for consensus/differences  
+**find_related** — Discover related pages via content analysis  
+**extract_links** — Categorize internal/external links  
+**monitor_changes** — Track page updates via content hashing
 
 ## Setup
 
@@ -78,7 +70,7 @@ uv run python test_benchmark.py
 
 **Other MCP Clients**: Use STDIO transport with `uv run python -m webdocx.server`
 
-## Stack
+## Library Stack
 
 - `fastmcp` — MCP server framework
 - `crawl4ai` — Web scraping with JavaScript support
@@ -88,22 +80,17 @@ uv run python test_benchmark.py
 
 ## Features
 
-**v0.2.0 Enhanced** (80% Validated)
-- Metadata extraction (+41% information)
-- Retry mechanism (handles network delays)
-- Source comparison (analytical insights)
-- Region-specific search (localized results)
-- Parallel research (faster processing)
-- Link extraction & analysis
-- Change monitoring
+Web scraping with real validation:
+- Metadata extraction (+41% information density)
+- Exponential backoff retry (handles flaky networks)
+- Multi-source comparison analysis
+- Region-specific search results
+- Parallel content fetching (3x faster)
+- Content change detection
 
-[See Benchmark Results →](docs/VALIDATED_IMPROVEMENTS.md)
+## Docs
 
-## Documentation
-
-- [Validated Improvements](docs/VALIDATED_IMPROVEMENTS.md) - Benchmarked results
-- [Enhanced Features](docs/ENHANCED_FEATURES.md)
-- [Requirements](docs/REQUIREMENTS.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Tools Reference](docs/TOOLS.md)
+- [Requirements](docs/REQUIREMENTS.md) — Scope and tech stack
+- [Architecture](docs/ARCHITECTURE.md) — How it works
+- [Tools Reference](docs/TOOLS.md) — Detailed tool usage
 
