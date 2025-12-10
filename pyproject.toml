@@ -10,7 +10,7 @@ dependencies = [
     "mcp",
     "fastmcp",
     "crawl4ai",
-    "duckduckgo-search",
+    "ddgs",
     "httpx",
     "beautifulsoup4",
     "readability-lxml",

@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "webdocx": {
+      "command": "/home/y4nn_777/Y7_Projects/AI_ML/webdocx-mcp/launch_mcp.sh",
+      "args": []
+    }
+  }
+}

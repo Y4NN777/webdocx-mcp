@@ -8,11 +8,26 @@ from fastmcp import FastMCP
 from webdocx.tools.search import search_web
 from webdocx.tools.scraper import scrape_url, crawl_docs
 from webdocx.tools.research import deep_dive, summarize_page
+from webdocx.tools.advanced import (
+    compare_sources,
+    find_related,
+    extract_links,
+    monitor_changes,
+)
 
 # Create MCP server
 mcp = FastMCP(
     name="webdocx",
-    instructions="Web search, scraping, and documentation gathering for LLMs",
+    instructions="""Web search, scraping, and documentation gathering for LLMs.
+    
+Provides comprehensive web research capabilities including:
+- Search: DuckDuckGo web search with filters
+- Scraping: Extract clean Markdown from any URL
+- Research: Multi-source topic research with aggregation
+- Crawling: Follow links to build documentation collections
+- Analysis: Compare sources, find related content, extract links
+- Monitoring: Track page changes over time
+""",
 )
 
 
@@ -89,6 +104,70 @@ async def tool_summarize_page(url: str) -> str:
         Page summary with sections.
     """
     return await summarize_page(url)
+
+
+@mcp.tool()
+async def tool_compare_sources(topic: str, sources: list[str]) -> str:
+    """Compare information across multiple sources.
+
+    Analyzes differences and similarities between sources.
+
+    Args:
+        topic: Topic being compared.
+        sources: List of URLs (2-5) to compare.
+
+    Returns:
+        Comparison report with common topics and differences.
+    """
+    return await compare_sources(topic, sources)
+
+
+@mcp.tool()
+async def tool_find_related(url: str, limit: int = 5) -> str:
+    """Find pages related to a given URL.
+
+    Uses the page content to discover similar resources.
+
+    Args:
+        url: Base URL to find related content for.
+        limit: Max related pages (1-10, default 5).
+
+    Returns:
+        List of related pages with descriptions.
+    """
+    return await find_related(url, limit)
+
+
+@mcp.tool()
+async def tool_extract_links(url: str, filter_external: bool = True) -> str:
+    """Extract all links from a page.
+
+    Useful for discovering navigation structure and resources.
+
+    Args:
+        url: URL to extract links from.
+        filter_external: Only return same-domain links (default True).
+
+    Returns:
+        Organized list of internal and external links.
+    """
+    return await extract_links(url, filter_external=filter_external)
+
+
+@mcp.tool()
+async def tool_monitor_changes(url: str, previous_hash: str | None = None) -> str:
+    """Check if a page has changed.
+
+    Tracks content modifications over time.
+
+    Args:
+        url: URL to monitor.
+        previous_hash: Previous content hash to compare against.
+
+    Returns:
+        Change detection report with content hash.
+    """
+    return await monitor_changes(url, previous_hash)
 
 
 def main():

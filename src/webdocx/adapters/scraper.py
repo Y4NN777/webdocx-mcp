@@ -27,33 +27,61 @@ class ScraperAdapter:
         }
         self._crawl4ai_available = True
 
-    async def fetch(self, url: str) -> Document:
+    async def fetch(self, url: str, *, retry: int = 2) -> Document:
         """Fetch and parse a URL into a Document.
 
         Uses crawl4ai for JS-heavy pages, falls back to httpx+readability.
 
         Args:
             url: URL to fetch.
+            retry: Number of retry attempts on failure.
 
         Returns:
             Document with markdown content.
 
         Raises:
-            ScrapingError: If fetching or parsing fails.
+            ScrapingError: If fetching or parsing fails after all retries.
         """
         if not url.strip():
             raise ScrapingError(url, "URL cannot be empty")
 
-        # Try crawl4ai first for better JS support
-        if self._crawl4ai_available:
-            try:
-                return await self._fetch_with_crawl4ai(url)
-            except Exception:
-                # Fall back to httpx if crawl4ai fails
-                pass
+        # Validate URL format
+        parsed = urlparse(url)
+        if not parsed.scheme or not parsed.netloc:
+            raise ScrapingError(url, "Invalid URL format")
 
-        # Fallback to httpx + readability
-        return await self._fetch_with_httpx(url)
+        last_error = None
+        for attempt in range(retry + 1):
+            try:
+                # Try crawl4ai first for better JS support
+                if self._crawl4ai_available:
+                    try:
+                        return await self._fetch_with_crawl4ai(url)
+                    except Exception as e:
+                        last_error = e
+                        # Fall back to httpx if crawl4ai fails
+                        pass
+
+                # Fallback to httpx + readability
+                return await self._fetch_with_httpx(url)
+
+            except ScrapingError as e:
+                if attempt == retry:
+                    raise
+                last_error = e
+                # Wait before retry (exponential backoff)
+                import asyncio
+
+                await asyncio.sleep(2**attempt)
+            except Exception as e:
+                last_error = e
+                if attempt == retry:
+                    raise ScrapingError(
+                        url, f"Failed after {retry + 1} attempts: {e}"
+                    ) from e
+                await asyncio.sleep(2**attempt)
+
+        raise ScrapingError(url, f"Failed after all retries: {last_error}")
 
     async def _fetch_with_crawl4ai(self, url: str) -> Document:
         """Fetch using crawl4ai (handles JavaScript).
@@ -105,7 +133,9 @@ class ScraperAdapter:
             Document with markdown content.
         """
         try:
-            async with httpx.AsyncClient(timeout=self._timeout, follow_redirects=True) as client:
+            async with httpx.AsyncClient(
+                timeout=self._timeout, follow_redirects=True
+            ) as client:
                 response = await client.get(url, headers=self._headers)
                 response.raise_for_status()
                 html = response.text
@@ -193,7 +223,9 @@ class ScraperAdapter:
     async def _summarize_with_httpx(self, url: str) -> PageSummary:
         """Summarize using httpx (fallback)."""
         try:
-            async with httpx.AsyncClient(timeout=self._timeout, follow_redirects=True) as client:
+            async with httpx.AsyncClient(
+                timeout=self._timeout, follow_redirects=True
+            ) as client:
                 response = await client.get(url, headers=self._headers)
                 response.raise_for_status()
                 html = response.text
@@ -256,7 +288,9 @@ class ScraperAdapter:
 
         for ol in soup.find_all("ol"):
             items = ol.find_all("li")
-            md_list = "\n".join(f"{i+1}. {li.get_text(strip=True)}" for i, li in enumerate(items))
+            md_list = "\n".join(
+                f"{i + 1}. {li.get_text(strip=True)}" for i, li in enumerate(items)
+            )
             ol.replace_with(f"\n{md_list}\n")
 
         text = soup.get_text()

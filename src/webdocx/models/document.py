@@ -17,7 +17,9 @@ class Document(BaseModel):
     url: str = Field(..., description="Source URL")
     title: str = Field(default="", description="Page title")
     content: str = Field(..., description="Markdown content")
-    fetched_at: datetime = Field(default_factory=datetime.now, description="When fetched")
+    fetched_at: datetime = Field(
+        default_factory=datetime.now, description="When fetched"
+    )
 
 
 class PageSummary(BaseModel):
@@ -25,4 +27,6 @@ class PageSummary(BaseModel):
 
     url: str = Field(..., description="Source URL")
     title: str = Field(default="", description="Page title")
-    sections: list[Section] = Field(default_factory=list, description="Extracted sections")
+    sections: list[Section] = Field(
+        default_factory=list, description="Extracted sections"
+    )
