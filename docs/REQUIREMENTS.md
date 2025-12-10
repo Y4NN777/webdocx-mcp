@@ -1,7 +1,7 @@
 # WebDocx MCP - Requirements
 
 ## Goal
-An MCP server that gives LLMs real-time web access for gathering documentation or aricle without leaving your workspace: search, scrape, crawl documentation, and synthesize content with source attribution.
+An MCP server that gives LLMs real-time web access for gathering documentation or article, blog post, or any other web content without leaving your workspace: search, scrape, crawl documentation, and synthesize content with source attribution.
 
 ## Tools
 
