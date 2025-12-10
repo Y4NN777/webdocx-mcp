@@ -14,6 +14,11 @@ from webdocx.tools.advanced import (
     extract_links,
     monitor_changes,
 )
+from webdocx.utils.orchestrator import (
+    suggest_tools,
+    classify_intent,
+    ResearchContext,
+)
 
 # Create MCP server
 mcp = FastMCP(
@@ -168,6 +173,66 @@ async def tool_monitor_changes(url: str, previous_hash: str | None = None) -> st
         Change detection report with content hash.
     """
     return await monitor_changes(url, previous_hash)
+
+
+@mcp.tool()
+def tool_suggest_workflow(query: str, known_urls: list[str] = None) -> dict:
+    """Suggest optimal research workflow for a query.
+    
+    Analyzes the query and recommends the best tools and workflow to answer it.
+    Uses smart intent classification and dynamic workflow generation.
+
+    Args:
+        query: Research question or task description.
+        known_urls: Optional list of already known URLs (default None).
+
+    Returns:
+        Dictionary with intent, workflow steps, and suggested parameters.
+    """
+    # Build context from known URLs
+    context = ResearchContext()
+    if known_urls:
+        context.known_urls = known_urls
+    
+    # Get workflow suggestions
+    result = suggest_tools(query, context)
+    
+    return result
+
+
+@mcp.tool()
+def tool_classify_research_intent(query: str) -> dict:
+    """Classify the research intent of a query.
+    
+    Analyzes a query to determine the user's research goal (quick answer,
+    deep research, documentation, comparison, discovery, or monitoring).
+    Returns confidence scores for each detected intent.
+
+    Args:
+        query: Research question or task description.
+
+    Returns:
+        Dictionary with primary and secondary intents with confidence scores.
+    """
+    intent_scores = classify_intent(query)
+    
+    return {
+        "primary_intent": {
+            "type": intent_scores[0].intent.value,
+            "confidence": intent_scores[0].confidence,
+            "reasons": intent_scores[0].reasons,
+            "keywords": intent_scores[0].keywords_matched,
+        },
+        "secondary_intents": [
+            {
+                "type": score.intent.value,
+                "confidence": score.confidence,
+                "reasons": score.reasons,
+                "keywords": score.keywords_matched,
+            }
+            for score in intent_scores[1:3]
+        ] if len(intent_scores) > 1 else []
+    }
 
 
 def main():

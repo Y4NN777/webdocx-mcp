@@ -8,15 +8,22 @@ Your AI assistant can't browse the web. WebDocx fixes that through MCP protocol.
 
 ## Tools
 
+### Core Research
 **search_web** — DuckDuckGo search with region/filter support  
 **scrape_url** — Extract page content as Markdown (optional metadata)  
 **crawl_docs** — Multi-page documentation crawling (smart filtering)  
 **deep_dive** — Multi-source research with parallel fetching  
 **summarize_page** — Quick page structure overview  
+
+### Analysis
 **compare_sources** — Analyze multiple sources for consensus/differences  
 **find_related** — Discover related pages via content analysis  
 **extract_links** — Categorize internal/external links  
 **monitor_changes** — Track page updates via content hashing
+
+### Smart Orchestration
+**suggest_workflow** — Auto-recommend optimal research workflow  
+**classify_research_intent** — Detect research goal with confidence scores
 
 ## Setup
 
@@ -80,13 +87,20 @@ uv run python test_benchmark.py
 
 ## Features
 
-Web scraping with real validation:
+**Enhanced Scraping**
 - Metadata extraction (+41% information density)
 - Exponential backoff retry (handles flaky networks)
 - Multi-source comparison analysis
 - Region-specific search results
 - Parallel content fetching (3x faster)
 - Content change detection
+
+**Smart Orchestration**
+- Intent classification (7 research patterns)
+- Dynamic workflow generation
+- Context-aware parameter optimization
+- Fallback strategies & parallel execution
+- Resource cost estimation (fast/medium/slow)
 
 ## Docs
 
