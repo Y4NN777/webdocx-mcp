@@ -1,7 +1,7 @@
 """DuckDuckGo search adapter."""
 
 import asyncio
-from  duckduckgo_search import DDGS
+from duckduckgo_search import DDGS
 
 from devlens.models.search import SearchResult
 from devlens.models.errors import SearchError

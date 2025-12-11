@@ -178,7 +178,7 @@ async def tool_monitor_changes(url: str, previous_hash: str | None = None) -> st
 @mcp.tool()
 def tool_suggest_workflow(query: str, known_urls: list[str] = None) -> dict:
     """Suggest optimal research workflow for a query.
-    
+
     Analyzes the query and recommends the best tools and workflow to answer it.
     Uses smart intent classification and dynamic workflow generation.
 
@@ -193,17 +193,17 @@ def tool_suggest_workflow(query: str, known_urls: list[str] = None) -> dict:
     context = ResearchContext()
     if known_urls:
         context.known_urls = known_urls
-    
+
     # Get workflow suggestions
     result = suggest_tools(query, context)
-    
+
     return result
 
 
 @mcp.tool()
 def tool_classify_research_intent(query: str) -> dict:
     """Classify the research intent of a query.
-    
+
     Analyzes a query to determine the user's research goal (quick answer,
     deep research, documentation, comparison, discovery, or monitoring).
     Returns confidence scores for each detected intent.
@@ -215,7 +215,7 @@ def tool_classify_research_intent(query: str) -> dict:
         Dictionary with primary and secondary intents with confidence scores.
     """
     intent_scores = classify_intent(query)
-    
+
     return {
         "primary_intent": {
             "type": intent_scores[0].intent.value,
@@ -231,14 +231,16 @@ def tool_classify_research_intent(query: str) -> dict:
                 "keywords": score.keywords_matched,
             }
             for score in intent_scores[1:3]
-        ] if len(intent_scores) > 1 else []
+        ]
+        if len(intent_scores) > 1
+        else [],
     }
 
 
 @mcp.tool()
 def get_server_docs(topic: str = "overview") -> str:
     """Get documentation about the WebDocx MCP server.
-    
+
     Provides guidance on server capabilities, tool usage, workflows, and best practices.
 
     Args:
@@ -272,7 +274,6 @@ deep_dive (multi-source aggregation)
 ## Topics
 tools, philosophy, workflows, orchestration, examples
 """,
-        
         "tools": """
 # Tools
 
@@ -301,7 +302,6 @@ get_server_docs(topic) - This documentation
 - Provide known_urls to skip search
 - summarize_page before expensive scrape
 """,
-        
         "workflows": """
 # Workflows
 
@@ -313,7 +313,6 @@ Discover: search_web → find_related → extract_links
 Monitor: monitor_changes(url, prev_hash)
 Smart: suggest_workflow → follow steps
 """,
-        
         "orchestration": """
 # Orchestration
 
@@ -336,7 +335,6 @@ Example:
 suggest_workflow("integrate API?") → quick_answer, [search_web(3), scrape_url]
 suggest_workflow("API docs", ["url"]) → documentation, [crawl_docs(25)] [skips search]
 """,
-        
         "examples": """
 # Examples
 
@@ -352,7 +350,6 @@ Best:
 - summarize_page before full scrape
 - compare_sources for 2-5 sources
 """,
-
         "philosophy": """
 # Design Philosophy & Developer Mindset
 
@@ -547,9 +544,9 @@ MAX_CRAWL_PAGES = int(os.getenv("WEBDOCX_MAX_PAGES", "100"))
 - Which errors are common? (improve messages)
 
 This isn't academic computer science—it's pragmatic engineering for real problems.
-"""
+""",
     }
-    
+
     topic_lower = topic.lower()
     if topic_lower in docs:
         return docs[topic_lower]

@@ -53,100 +53,134 @@ DevLens gives you **12 specialized tools**—think of it like a camera bag of le
 
 ### **Installation**
 
-\# Clone the repository  
-git clone \[https://github.com/Y4NN777/devlens-mcp.git\](https://github.com/Y4NN777/devlens-mcp.git)  
+```bash
+# Clone the repository
+git clone https://github.com/Y4NN777/devlens-mcp.git
 cd devlens-mcp
 
-\# Install dependencies  
+# Install dependencies
 uv sync
 
-\# Run the server (STDIO mode)  
-uv run python \-m devlens.server
+# Run the server (STDIO mode)
+uv run python -m devlens.server
+```
 
 ### **Configuration du client MCP**
 
 #### **Claude Desktop**
 
-Add this to claude\_desktop\_config.json:
+Add this to `claude_desktop_config.json`:
 
-* macOS: \~/Library/Application Support/Claude/claude\_desktop\_config.json  
-* Linux: \~/.config/claude/claude\_desktop\_config.json  
-* Windows: %APPDATA%\\Claude\\claude\_desktop\_config.json
+* macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+* Linux: `~/.config/claude/claude_desktop_config.json`
+* Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-{  
-  "mcpServers": {  
-    "devlens": {  
-      "command": "uv",  
-      "args": \["run", "python", "-m", "devlens.server"\],  
-      "cwd": "/absolute/path/to/devlens-mcp"  
-    }  
-  }  
+**Option 1: Using launch script (Recommended - Cross-Platform)**
+```json
+{
+  "mcpServers": {
+    "devlens": {
+      "command": "/absolute/path/to/devlens-mcp/launch_mcp.sh",
+      "args": []
+    }
+  }
 }
+```
 
-#### **VS Code Copilot**
-
-Create .vscode/mcp.json in your workspace:
-
-{  
-  "servers": {  
-    "devlens": {  
-      "command": "/absolute/path/to/devlens-mcp/launch\_mcp.sh"  
-    }  
-  }  
+**Option 2: Direct uv command**
+```json
+{
+  "mcpServers": {
+    "devlens": {
+      "command": "uv",
+      "args": ["run", "python", "-m", "devlens.server"],
+      "cwd": "/absolute/path/to/devlens-mcp"
+    }
+  }
 }
+```
 
-#### **Autres clients MCP**
+#### **VS Code Copilot (Recommended - Cross-Platform)**
 
-Use STDIO transport: uv run python \-m devlens.server
+Create `.vscode/mcp.json` in your workspace:
+
+```json
+{
+  "servers": {
+    "devlens": {
+      "command": "/absolute/path/to/devlens-mcp/launch_mcp.sh",
+      "args": []
+    }
+  }
+}
+```
+
+**Note:** The `launch_mcp.sh` script is **cross-platform** and automatically:
+- Detects your OS (Linux/macOS/Windows)
+- Locates `uv` installation (checks `~/.local/bin/uv`, `~/.cargo/bin/uv`, or system PATH)
+- Uses the correct Python from `.venv` (`.venv/bin/python` on Unix, `.venv/Scripts/python.exe` on Windows)
+- No manual configuration needed!
+
+#### **Other MCP Clients**
+
+Use STDIO transport:
+
+```bash
+uv run python -m devlens.server
+```
 
 ### **Verify Installation**
 
-\# Run validation tests  
-uv run python test\_benchmark.py
+Test the server is working:
 
-\# Test orchestration system  
-uv run python test\_orchestration.py
-
-\# See live demos  
-uv run python demo\_orchestration.py
+```bash
+# Test basic functionality
+uv run python -c "from devlens.server import mcp; print('DevLens server loaded successfully')"
+```
 
 ## **Usage Examples**
 
 ### **Manual Tool Usage**
 
-\# Simple search  
-search\_web("FastAPI tutorial", limit=5)
+```python
+# Simple search
+search_web("FastAPI tutorial", limit=5)
 
-\# Scrape with metadata  
-scrape\_url("\[https://docs.python.org\](https://docs.python.org)", include\_metadata=true)
+# Scrape with metadata
+scrape_url("https://docs.python.org", include_metadata=True)
 
-\# Multi-source research  
-deep\_dive("Python async best practices", depth=5, parallel=true)
+# Multi-source research
+deep_dive("Python async best practices", depth=5, parallel=True)
 
-\# Compare perspectives  
-compare\_sources("FastAPI vs Flask", \["url1", "url2"\])
+# Compare perspectives
+compare_sources("FastAPI vs Flask", ["url1", "url2"])
+```
 
 ### **Smart Orchestration**
 
-\# Let DevLens recommend the workflow  
-suggest\_workflow("How to integrate payment API in Burkina Faso?")
+```python
+# Let DevLens recommend the workflow
+suggest_workflow("How to integrate payment API in Burkina Faso?")
 
-\# Returns:  
-\# \- Primary intent: quick\_answer (50% confidence)  
-\# \- Workflow: \[search\_web(limit=3), scrape\_url\]  
-\# \- Suggested parameters optimized for intent  
-\# \- Fallback strategies if tools fail
+# Returns:
+# - Primary intent: quick_answer (50% confidence)
+# - Workflow: [search_web(limit=3), scrape_url]
+# - Suggested parameters optimized for intent
+# - Fallback strategies if tools fail
+```
 
 ### **With Context**
 
-\# Provide known URLs to skip search  
-context \= ResearchContext(known\_urls=\["\[https://docs.stripe.com\](https://docs.stripe.com)"\])  
-suggest\_workflow("Stripe payment integration guide", context)
+```python
+# Provide known URLs to skip search
+context = ResearchContext(known_urls=["https://docs.stripe.com"])
+suggest_workflow("Stripe payment integration guide", context)
 
-\# DevLens adapts:  
-\# \- Skips search (URLs already known)  
-\# \- Goes straight to crawl\_docs or scrape\_url  
-\# \- Optimizes parameters based on intent
+# DevLens adapts:
+# - Skips search (URLs already known)
+# - Goes straight to crawl_docs or scrape_url
+# - Optimizes parameters based on intent
+```
 
 ## **Architecture**
 
